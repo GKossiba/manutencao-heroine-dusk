@@ -279,27 +279,35 @@ function action_logic_moveselect() {
 
 /**** Render functions ***************/
 function action_render() {
-
   if (!action.button_img_loaded) return;
 
-  // if in combat, show fight and run
-  if (gamestate == STATE_COMBAT) {
-    action_render_button(0, BUTTON_POS_ATTACK);
-    action_render_button(1, BUTTON_POS_RUN);
-  }
+  if (gamestate == STATE_COMBAT)
+    renderCombatButtons();
 
-
-  // show spells
-  if (avatar.spellbook >= 1) action_render_button(2, BUTTON_POS_HEAL);
-  if (avatar.spellbook >= 2) action_render_button(3, BUTTON_POS_BURN);
-  if (avatar.spellbook >= 3) action_render_button(4, BUTTON_POS_UNLOCK);
-  if (avatar.spellbook >= 4) action_render_button(5, BUTTON_POS_LIGHT);
-  if (avatar.spellbook >= 5) action_render_button(6, BUTTON_POS_FREEZE);
-  if (avatar.spellbook >= 6) action_render_button(7, BUTTON_POS_REFLECT);
+  renderSpellButtons();
+  renderInteractionOptions();
 
   action_render_select(action.select_pos);
-  
 }
+
+function renderCombatButtons() {
+  action_render_button(0, BUTTON_POS_ATTACK);
+  action_render_button(1, BUTTON_POS_RUN);
+}
+
+function renderSpellButtons() {
+  for (var i = 0; i < SPELL_BUTTONS.length; i++) {
+    var s = SPELL_BUTTONS[i];
+    if (avatar.spellbook >= s.level)
+      action_render_button(s.id, s.pos);
+  }
+}
+
+function renderCombatButtons() {
+  action_render_button(0, BUTTON_POS_ATTACK);
+  action_render_button(1, BUTTON_POS_RUN);
+}
+
 
 function action_render_button(id, pos) {
   ctx.drawImage(
@@ -329,4 +337,3 @@ function action_render_select(pos) {
     SELECT_SIZE * SCALE
   );
 }
-
