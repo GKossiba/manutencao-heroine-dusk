@@ -51,31 +51,64 @@ function combat_set_enemy(enemy_id) {
   sounds_play(SFX_MISS);
 }
 
-/**** Logic **************************/
-function combat_logic() {
-  
-  switch (combat.phase) {
-    case COMBAT_PHASE_INTRO:
-	  combat_logic_intro();
-	  break;
-	case COMBAT_PHASE_INPUT:
-	  combat_logic_input();
-	  break;
-	case COMBAT_PHASE_OFFENSE:
-	  combat_logic_offense();
-	  break;
-	case COMBAT_PHASE_DEFENSE:
-	  combat_logic_defense();
-	  break;
-	case COMBAT_PHASE_VICTORY:
-	  combat_logic_victory();
-	  break;
-	case COMBAT_PHASE_DEFEAT:
-	  combat_logic_defeat();
-	  break;
-  }
-  
+function resetCombatInputFlags() {
+  combat.enemy_hurt = false;
+  combat.hero_hurt  = false;
+  combat.run_success = false;
 }
+function finalizeOffensePhase() {
+  combat.phase = COMBAT_PHASE_OFFENSE;
+  redraw = true;
+  combat.timer = (OPTIONS.animation === true) ? 30 : 1;
+}
+
+function canAttack() {
+  return action_checkuse(BUTTON_POS_ATTACK);
+}
+function canHeal() {
+  return action_checkuse(BUTTON_POS_HEAL)
+      && avatar.mp > 0
+      && avatar.spellbook >= 1
+      && avatar.hp < avatar.max_hp;
+}
+function canBurn() {
+  return action_checkuse(BUTTON_POS_BURN)
+      && avatar.mp > 0
+      && avatar.spellbook >= 2;
+}
+function canUnlock() {
+  return action_checkuse(BUTTON_POS_UNLOCK)
+      && avatar.mp > 0
+      && avatar.spellbook >= 3
+      && combat.enemy.category == ENEMY_CATEGORY_AUTOMATON;
+}
+function canRun() {
+  return action_checkuse(BUTTON_POS_RUN);
+}
+
+const INPUT_ACTIONS = [
+  { can: canAttack, do: power_hero_attack },
+  { can: canHeal,   do: power_heal       },
+  { can: canBurn,   do: power_burn       },
+  { can: canUnlock, do: power_unlock     },
+  { can: canRun,    do: power_run        },
+];
+
+function combat_logic_input() {
+  resetCombatInputFlags();
+
+  for (var i = 0; i < INPUT_ACTIONS.length; i++) {
+    var a = INPUT_ACTIONS[i];
+    if (a.can()) {
+      a.do();
+      finalizeOffensePhase();
+      return;
+    }
+  }
+
+  action_logic();
+}
+
 
 function combat_logic_intro() {
     if (OPTIONS.animation == true) {
