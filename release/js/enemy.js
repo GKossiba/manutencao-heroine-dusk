@@ -28,38 +28,32 @@ enemy.img_loaded = false;
 enemy.stats = new Array();
 enemy.render_offset = {x:0, y:0};
 
-function enemy_init() {
-  for (i=0; i<ENEMY_COUNT; i++) {
+const ENEMY_IMAGE_PATHS = [
+  "images/enemies/shadow_tendrils.png",
+  "images/enemies/imp.png",
+  "images/enemies/shadow_soul.png",
+  "images/enemies/zombie.png",
+  "images/enemies/skeleton.png",
+  "images/enemies/druid.png",
+  "images/enemies/mimic.png",
+  "images/enemies/death_speaker.png"
+];
+
+function createImageSlots() {
+  enemy.img = new Array(ENEMY_COUNT);
+  for (let i = 0; i < ENEMY_COUNT; i++) {
     enemy.img[i] = new Image();
   }
+}
 
-  // load enemy images
-  enemy.img[ENEMY_SHADOW_TENDRILS].src = "images/enemies/shadow_tendrils.png";
-  enemy.img[ENEMY_SHADOW_TENDRILS].onload = function() {enemy_onload();};
+function loadEnemyImages() {
+  for (let i = 0; i < ENEMY_COUNT; i++) {
+    enemy.img[i].src = ENEMY_IMAGE_PATHS[i];
+    enemy.img[i].onload = function() { enemy_onload(); };
+  }
+}
 
-  enemy.img[ENEMY_IMP].src = "images/enemies/imp.png";
-  enemy.img[ENEMY_IMP].onload = function() {enemy_onload();};
-
-  enemy.img[ENEMY_SHADOW_SOUL].src = "images/enemies/shadow_soul.png";
-  enemy.img[ENEMY_SHADOW_SOUL].onload = function() {enemy_onload();};
-
-  enemy.img[ENEMY_ZOMBIE].src = "images/enemies/zombie.png";
-  enemy.img[ENEMY_ZOMBIE].onload = function() {enemy_onload();};
-
-  enemy.img[ENEMY_SKELETON].src = "images/enemies/skeleton.png";
-  enemy.img[ENEMY_SKELETON].onload = function() {enemy_onload();};
-
-  enemy.img[ENEMY_DRUID].src = "images/enemies/druid.png";
-  enemy.img[ENEMY_DRUID].onload = function() {enemy_onload();}
-
-  enemy.img[ENEMY_MIMIC].src = "images/enemies/mimic.png";
-  enemy.img[ENEMY_MIMIC].onload = function() {enemy_onload();}
-
-  enemy.img[ENEMY_DEATH_SPEAKER].src = "images/enemies/death_speaker.png";
-  enemy.img[ENEMY_DEATH_SPEAKER].onload = function() {enemy_onload();}
-
-  // set enemy stats
-
+function initEnemyStats() {
   enemy.stats[ENEMY_SHADOW_TENDRILS] = {name:"Shadow Tendrils", hp:6, atk_min:2, atk_max:5, gold_min:1, gold_max:2, category:ENEMY_CATEGORY_SHADOW};
   enemy.stats[ENEMY_SHADOW_TENDRILS].powers = [ENEMY_POWER_ATTACK];
 
@@ -83,7 +77,12 @@ function enemy_init() {
 
   enemy.stats[ENEMY_DEATH_SPEAKER] = {name:"Death Speaker", hp:84, atk_min:8, atk_max:15, gold_min:225, gold_max:275, category:ENEMY_CATEGORY_DEMON};
   enemy.stats[ENEMY_DEATH_SPEAKER].powers = [ENEMY_POWER_ATTACK, ENEMY_POWER_SCORCH];
-  
+}
+
+function enemy_init() {
+  createImageSlots();
+  loadEnemyImages();
+  initEnemyStats();
 }
 
 function enemy_onload() {
