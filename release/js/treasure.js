@@ -42,21 +42,27 @@ function treasure_img_onload() {treasure.img_loaded = true;}
  * This function renders a gold pile
  * with correct gold value up to 1023 currently
  */
+const GOLD_DRAW_TABLE = [
+  { mask: 128, icon: 7 },
+  { mask: 512, icon: 9 },
+  { mask: 32,  icon: 5 },
+  { mask: 16,  icon: 4 },
+  { mask: 8,   icon: 3 },
+  { mask: 1,   icon: 0 },
+  { mask: 4,   icon: 2 },
+  { mask: 64,  icon: 6 },
+  { mask: 2,   icon: 1 },
+  { mask: 256, icon: 8 }
+];
+
 function treasure_render_gold(total_value) {
-
-  // arranged in treasure pile draw order
-  if (total_value & 128) treasure_render_gold_icon(7);
-  if (total_value & 512) treasure_render_gold_icon(9);
-  if (total_value & 32) treasure_render_gold_icon(5);
-  if (total_value & 16) treasure_render_gold_icon(4);
-  if (total_value & 8) treasure_render_gold_icon(3);
-  if (total_value & 1) treasure_render_gold_icon(0);
-  if (total_value & 4) treasure_render_gold_icon(2);
-  if (total_value & 64) treasure_render_gold_icon(6);
-  if (total_value & 2) treasure_render_gold_icon(1);
-  if (total_value & 256) treasure_render_gold_icon(8);
-
+  GOLD_DRAW_TABLE.forEach(entry => {
+    if (total_value & entry.mask) {
+      treasure_render_gold_icon(entry.icon);
+    }
+  });
 }
+
 
 function treasure_render_gold_icon(item_id) {
 
