@@ -303,12 +303,6 @@ function renderSpellButtons() {
   }
 }
 
-function renderCombatButtons() {
-  action_render_button(0, BUTTON_POS_ATTACK);
-  action_render_button(1, BUTTON_POS_RUN);
-}
-
-
 function action_render_button(id, pos) {
   ctx.drawImage(
     action.button_img,
